@@ -20,7 +20,9 @@ interface WeatherData {
 
 export default function WeatherPage() {
   const router = useRouter();
-  const { lat, lon, name } = router.query;
+  const lat = router.query.lat as string | undefined;
+  const lon = router.query.lon as string | undefined;
+  const name = router.query.name as string | undefined;
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +37,7 @@ export default function WeatherPage() {
             params: {
               lat,
               lon,
-              appid: "8dea25d74f20fed0ec84088a8df7624a",
+              appid: process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY,
               units: "metric",
             },
           }

@@ -1,12 +1,11 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+// next.config.ts
+const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'openweathermap.org',
-        pathname: '/img/wn/**',
+        protocol: "https",
+        hostname: "openweathermap.org",
+        pathname: "/img/wn/**",
       },
     ],
   },
