@@ -93,27 +93,27 @@ export default function CityTable() {
   }, []);
 
   return (
-    <div className="overflow-x-auto px-4">
+    <div className="overflow-x-auto px-6 py-4 bg-gray-50">
       <input
         type="text"
         placeholder="Search city..."
-        className="mb-4 mt-2 w-full max-w-md border p-2"
+        className="mb-4 mt-2 w-full max-w-md border p-2 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
 
-      <table className="min-w-full border">
+      <table className="min-w-full table-auto border-collapse rounded-lg bg-white shadow-md">
         <thead>
-          <tr className="bg-gray-200 text-left">
-            <th className="p-2">City</th>
-            <th className="p-2">Country</th>
-            <th className="p-2">Timezone</th>
+          <tr className="bg-blue-600 text-white">
+            <th className="p-4">City</th>
+            <th className="p-4">Country</th>
+            <th className="p-4">Timezone</th>
           </tr>
         </thead>
         <tbody>
           {cities.map((city) => (
-            <tr key={city.geoname_id} className="border-b hover:bg-gray-50">
-              <td className="p-2">
+            <tr key={city.geoname_id} className="border-b hover:bg-gray-100">
+              <td className="p-4 text-blue-600">
                 <Link
                   href={{
                     pathname: '/weather',
@@ -125,13 +125,13 @@ export default function CityTable() {
                   }}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
+                  className="hover:underline"
                 >
                   {city.name}
                 </Link>
               </td>
-              <td className="p-2">{city.country}</td>
-              <td className="p-2">{city.timezone}</td>
+              <td className="p-4">{city.country}</td>
+              <td className="p-4">{city.timezone}</td>
             </tr>
           ))}
         </tbody>
