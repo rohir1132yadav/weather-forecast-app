@@ -43,10 +43,16 @@ export default function WeatherPage() {
           }
         );
         setWeather(response.data);
-      } catch (err: any) {
-        setError("Failed to fetch weather data. Please try again later.");
-        console.error(err);
-      }
+      } catch (err: unknown) {
+  if (axios.isAxiosError(err)) {
+    setError("Failed to fetch weather data. Please try again later.");
+    console.error("Axios error:", err.response?.data || err.message);
+  } else {
+    setError("An unexpected error occurred.");
+    console.error("Unexpected error:", err);
+  }
+}
+
     };
 
     fetchWeather();
