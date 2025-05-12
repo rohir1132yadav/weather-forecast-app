@@ -11,6 +11,18 @@ interface City {
   coordinates: { lat: number; lon: number };
 }
 
+interface RecordFields {
+  name: string;
+  cou_name_en: string;
+  timezone: string;
+  geoname_id: string;
+  coordinates: [number, number];
+}
+
+interface CityRecord {
+  fields: RecordFields;
+}
+
 export default function CityTable() {
   const [cities, setCities] = useState<City[]>([]);
   const [query, setQuery] = useState('');
@@ -45,7 +57,7 @@ export default function CityTable() {
           }
         );
 
-        const newCities: City[] = response.data.records.map((r: any) => ({
+        const newCities: City[] = response.data.records.map((r: CityRecord) => ({
           name: r.fields.name,
           country: r.fields.cou_name_en,
           timezone: r.fields.timezone,

@@ -1,64 +1,77 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import axios from "axios";
 
 interface WeatherData {
-  temperature: number;
-  description: string;
-  humidity: number;
-  wind: number;
-  pressure: number;
-  icon: string;
+  main: {
+    temp: number;
+    pressure: number;
+    humidity: number;
+  };
+  weather: [
+    {
+      description: string;
+      icon: string;
+    }
+  ];
+  wind: {
+    speed: number;
+  };
 }
 
 export default function WeatherPage() {
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const router = useRouter();
   const { lat, lon, name } = router.query;
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (lat && lon) {
-      fetchWeather(lat as string, lon as string);
+      const fetchWeather = async () => {
+        try {
+          const response = await axios.get(
+            `https://api.openweathermap.org/data/2.5/weather`,
+            {
+              params: {
+                lat,
+                lon,
+                appid: "YOUR_OPENWEATHER_API_KEY",
+                units: "metric", // or "imperial" for Fahrenheit
+              },
+            }
+          );
+          setWeather(response.data);
+        } catch (error) {
+          console.error("Error fetching weather data", error);
+        }
+      };
+      fetchWeather();
     }
   }, [lat, lon]);
 
-  const fetchWeather = async (lat: string, lon: string) => {
-    try {
-      const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
-      );
-      const data = response.data;
-      setWeather({
-        temperature: data.main.temp,
-        description: data.weather[0].description,
-        humidity: data.main.humidity,
-        wind: data.wind.speed,
-        pressure: data.main.pressure,
-        icon: data.weather[0].icon,
-      });
-    } catch (e) {
-      setError('Failed to fetch weather.');
-    }
-  };
+  if (!weather) return <div>Loading...</div>;
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Weather for {name}</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      {weather && (
-        <div className="flex items-center gap-4">
-          <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="weather icon" />
-          <div>
-            <p>Temperature: {weather.temperature}°C</p>
-            <p>Description: {weather.description}</p>
-            <p>Humidity: {weather.humidity}%</p>
-            <p>Wind Speed: {weather.wind} m/s</p>
-            <p>Pressure: {weather.pressure} hPa</p>
-          </div>
+      <h1 className="text-xl font-semibold">Weather in {name}</h1>
+      <div className="mt-4">
+        <div className="flex">
+          <Image
+            src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+            alt={weather.weather[0].description}
+            width={50}
+            height={50}
+          />
+          <p className="ml-2">{weather.weather[0].description}</p>
         </div>
-      )}
+        <div className="mt-2">
+          <p>Temperature: {weather.main.temp}°C</p>
+          <p>Pressure: {weather.main.pressure} hPa</p>
+          <p>Humidity: {weather.main.humidity}%</p>
+          <p>Wind Speed: {weather.wind.speed} m/s</p>
+        </div>
+      </div>
     </div>
   );
 }
